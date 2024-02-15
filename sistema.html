@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Asistencias</title>
+</head>
+<body>
+    <h1>Tomar Asistencias</h1>
+    <form method="post" action="/registrar_asistencia">
+        <label for="estudiante">Estudiante:</label>
+        <select name="estudiante" id="estudiante">
+            {% for estudiante in estudiantes %}
+                <option value="{{ estudiante.id }}">{{ estudiante.nombre }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="asignatura">Asignatura:</label>
+        <select name="asignatura" id="asignatura">
+            {% for asignatura in asignaturas %}
+                <option value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+            {% endfor %}
+        </select><br>
+
+        <input type="submit" value="Registrar Asistencia">
+    </form>
+</body>
+</html>
