@@ -5,25 +5,112 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Asistencias</title>
+    <link rel="stylesheet" type="text/css" href="diseño.css">
 </head>
 <body>
-    <h1>Tomar Asistencias</h1>
-    <form method="post" action="/registrar_asistencia">
-        <label for="estudiante">Estudiante:</label>
-        <select name="estudiante" id="estudiante">
-            {% for estudiante in estudiantes %}
-                <option value="{{ estudiante.id }}">{{ estudiante.nombre }}</option>
-            {% endfor %}
-        </select><br>
+    <header>
+        <h1>Sistema de Asistencias</h1>
+    </header>
 
-        <label for="asignatura">Asignatura:</label>
-        <select name="asignatura" id="asignatura">
-            {% for asignatura in asignaturas %}
-                <option value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
-            {% endfor %}
-        </select><br>
+    <img src="diagramaUML.png" alt="Diagrama UML">
 
-        <input type="submit" value="Registrar Asistencia">
+    <form id="profesorForm">
+        <h2>Registro de Profesor</h2>
+
+        <label for="nombreProfesor">Nombre del Profesor:</label>
+        <input type="text" name="nombreProfesor" id="nombreProfesor" required>
+
+        <label for="asignaturaProfesor">Asignatura que Imparte:</label>
+        <input type="text" name="asignaturaProfesor" id="asignaturaProfesor" required>
+
+        <input type="button" value="Registrar Profesor" onclick="registrarProfesor()">
     </form>
+
+    <form id="asistenciaEstudianteForm" style="display: none;">
+        <h2>Registro de Asistencia por Estudiante</h2>
+
+        <label for="nombreEstudiante">Nombre del Estudiante:</label>
+        <input type="text" name="nombreEstudiante" id="nombreEstudiante" required>
+
+        <label for="asistencia">¿Asistió?</label>
+        <select name="asistencia" id="asistencia" required>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="periodoAcademico">Periodo Académico:</label>
+        <input type="text" name="periodoAcademico" id="periodoAcademico" required>
+
+        <label for="paralelo">Paralelo:</label>
+        <input type="text" name="paralelo" id="paralelo" required>
+
+        <input type="button" value="Registrar Asistencia" onclick="registrarAsistenciaEstudiante()">
+    </form>
+    <div id="listaAsistencias" style="margin-top: 20px;"></div>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <script>
+        function mostrarMensaje(mensaje, tipo) {
+            var mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.innerText = mensaje;
+            mensajeDiv.style.display = 'block';
+
+            if (tipo === 'error') {
+                mensajeDiv.style.backgroundColor = '#f8d7da';
+                mensajeDiv.style.border = '1px solid #f5c6cb';
+                mensajeDiv.style.color = '#721c24';
+            } else if (tipo === 'success') {
+                mensajeDiv.style.backgroundColor = '#d4edda';
+                mensajeDiv.style.border = '1px solid #c3e6cb';
+                mensajeDiv.style.color = '#155724';
+            }
+
+            setTimeout(function() {
+                mensajeDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function registrarProfesor() {
+            mostrarMensaje('Profesor registrado', 'success');
+
+            document.getElementById('asistenciaEstudianteForm').style.display = 'block';
+        }
+
+        function registrarAsistenciaEstudiante() {
+            var nombreEstudiante = document.getElementById('nombreEstudiante').value;
+            var asistencia = document.getElementById('asistencia').value;
+            var periodoAcademico = document.getElementById('periodoAcademico').value;
+            var paralelo = document.getElementById('paralelo').value;
+
+            if (nombreEstudiante.trim() === '' || periodoAcademico.trim() === '' || paralelo.trim() === '') {
+                mostrarMensaje('Por favor, complete todos los campos.', 'error');
+                return;
+            }
+
+            mostrarMensaje('Asistencia de ' + nombreEstudiante + ' registrada (' + asistencia + ')', 'success');
+
+            mostrarAsistenciaEnLista(nombreEstudiante, asistencia, periodoAcademico, paralelo);
+        }
+
+        function mostrarAsistenciaEnLista(nombreEstudiante, asistencia, periodoAcademico, paralelo) {
+            var listaAsistenciasDiv = document.getElementById('listaAsistencias');
+
+            var nuevoElementoLista = document.createElement('div');
+            nuevoElementoLista.innerHTML = `
+                <strong>Asignatura:</strong> ${document.getElementById('asignaturaProfesor').value} |
+                <strong>Asistencia:</strong> ${asistencia} |
+                <strong>Estudiante:</strong> ${nombreEstudiante} |
+                <strong>Periodo Académico:</strong> ${periodoAcademico} |
+                <strong>Paralelo:</strong> ${paralelo}
+            `;
+            listaAsistenciasDiv.appendChild(nuevoElementoLista);
+
+            document.getElementById('nombreEstudiante').value = '';
+            document.getElementById('asistencia').value = 'si';
+            document.getElementById('periodoAcademico').value = '';
+            document.getElementById('paralelo').value = '';
+        }
+    </script>
 </body>
 </html>
